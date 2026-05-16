@@ -226,10 +226,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
-// ── KONFIGURATION ────────────────────────────────────────────────────────────
-const PASSWORD     = 'DEIN_PASSWORT_HIER';
-const SUPABASE_URL = 'DEINE_SUPABASE_URL';
-const SUPABASE_KEY = 'DEIN_ANON_KEY';
+// ─── KONFIGURATION ──────────────────────────────────────────────────────────
+const PASSWORD = 'GrueneMitte22';          // <-- Passwort setzen
+const SUPABASE_URL = 'https://cpnhmtmnxdvpdpzmimbq.supabase.co';      // <-- z.B. https://xyz.supabase.co
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwbmhtdG1ueGR2cGRwem1pbWJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDE4MjUsImV4cCI6MjA5NDUxNzgyNX0.aP9rKaulEt2C6ubwl9Y76SYQ9L7I7lZ6RXyE6WVTxmk';           // <-- anon/public key
 // ────────────────────────────────────────────────────────────────────────────
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
