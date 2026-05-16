@@ -233,7 +233,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // ────────────────────────────────────────────────────────────────────────────
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let tasks = [], filter = 'sehr-hoch', openCards = new Set();
+let tasks = [], filter = 'alle', openCards = new Set();
 
 // LOGIN
 document.getElementById('login-btn').addEventListener('click', tryLogin);
