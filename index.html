@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Unser Haus">
+<meta name="theme-color" content="#1a1a18">
+<title>To Dos fürs neue Haus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1a18;
+    --bg2: #242420;
+    --bg3: #2e2e2a;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede6;
+    --text2: #9e9b94;
+    --text3: #5e5c57;
+    --accent: #c8b97a;
+    --accent2: #8c7d45;
+    --red: #c0604a;
+    --red-bg: rgba(192,96,74,0.12);
+    --amber: #c09a4a;
+    --amber-bg: rgba(192,154,74,0.12);
+    --green: #5a8a5a;
+    --green-bg: rgba(90,138,90,0.12);
+    --radius: 14px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overscroll-behavior: none;
+  }
+
+  /* LOGIN */
+  #login-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 2rem;
+    gap: 2rem;
+  }
+  .login-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--text);
+    text-align: center;
+    line-height: 1.2;
+  }
+  .login-title em { color: var(--accent); font-style: italic; }
+  .login-subtitle { font-size: 0.85rem; color: var(--text3); text-align: center; }
+  .login-box {
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .pw-input {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    padding: 14px 16px;
+    width: 100%;
+    outline: none;
+    text-align: center;
+    letter-spacing: 0.15em;
+  }
+  .pw-input::placeholder { letter-spacing: 0; color: var(--text3); }
+  .pw-input:focus { border-color: var(--accent2); }
+  .login-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.95rem;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    padding: 14px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .login-btn:active { opacity: 0.8; }
+  .login-error { font-size: 0.8rem; color: var(--red); text-align: center; display: none; }
+
+  /* APP */
+  #app { display: none; }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: calc(var(--safe-top) + 16px) 20px 14px;
+  }
+  .topbar-inner { display: flex; align-items: center; justify-content: space-between; }
+  .app-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    color: var(--text);
+  }
+  .app-title em { color: var(--accent); font-style: italic; }
+  .topbar-actions { display: flex; gap: 8px; }
+  .icon-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border2);
+    background: var(--bg2);
+    color: var(--text2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 1.1rem;
+  }
+
+  .filters {
+    display: flex;
+    gap: 6px;
+    padding: 12px 20px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar { display: none; }
+  .chip {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  .main { padding: 16px 20px calc(100px + var(--safe-bottom)); }
+
+  .section-header {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin: 20px 0 10px;
+  }
+
+  .task-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .task-card:active { border-color: var(--border2); }
+
+  .task-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 14px 14px 14px;
+  }
+
+  .check-ring {
+    width: 22px; height: 22px; min-width: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+  .check-ring.done-ring {
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .check-ring.done-ring::after {
+    content: '';
+    display: block;
+    width: 5px; height: 9px;
+    border: 2px solid #fff;
+    border-top: none; border-left: none;
+    transform: rotate(40deg) translateY(-1px);
+  }
+
+  .task-body { flex: 1; min-width: 0; }
+  .task-name {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .task-name.done-name { text-decoration: line-through; color: var(--text3); }
+
+  .task-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+  .tag {
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 8px;
+  }
+  .prio-hoch { background: var(--red-bg); color: #e08070; }
+  .prio-mittel { background: var(--amber-bg); color: #d4a860; }
+  .prio-niedrig { background: var(--green-bg); color: #7ab87a; }
+  .cat-tag { background: var(--bg3); color: var(--text2); }
+  .date-tag { background: var(--bg3); color: var(--text2); }
+
+  .expand-btn {
+    width: 28px; height: 28px; min-width: 28px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    color: var(--text3);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    font-size: 1.1rem;
+    margin-top: -2px;
+  }
+
+  .task-detail {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+    margin-top: 0;
+  }
+  .task-detail.open { display: block; padding-top: 14px; }
+
+  .field-label {
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+  .field-label:first-child { margin-top: 0; }
+
+  .field-input, .field-textarea, .field-select {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field-input:focus, .field-textarea:focus, .field-select:focus { border-color: var(--accent2); }
+  .field-textarea { resize: vertical; min-height: 70px; }
+
+  .link-list { margin-bottom: 8px; }
+  .link-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .link-item:last-child { border-bottom: none; }
+  .link-item a {
+    flex: 1;
+    font-size: 0.82rem;
+    color: var(--accent);
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .link-del {
+    color: var(--text3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 2px 4px;
+  }
+
+  .link-add-row { display: flex; gap: 8px; }
+  .link-add-row input {
+    flex: 1;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    outline: none;
+  }
+  .link-add-row input:focus { border-color: var(--accent2); }
+  .link-add-btn {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    color: var(--text2);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .del-task-btn {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(192,96,74,0.3);
+    border-radius: 10px;
+    color: var(--red);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  /* FAB */
+  .fab {
+    position: fixed;
+    bottom: calc(24px + var(--safe-bottom));
+    right: 24px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-size: 1.6rem;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    z-index: 20;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 30;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--bg2);
+    border-radius: var(--radius) var(--radius) 0 0;
+    border: 1px solid var(--border2);
+    width: 100%;
+    max-width: 600px;
+    padding: 20px 20px calc(20px + var(--safe-bottom));
+    max-height: 90dvh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn-primary {
+    flex: 1; padding: 13px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .btn-secondary {
+    flex: 1; padding: 13px;
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: calc(90px + var(--safe-bottom));
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid var(--border2);
+    border-radius: 20px;
+    padding: 8px 18px;
+    font-size: 0.82rem;
+    opacity: 0;
+    transition: all 0.25s;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 50;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* LOADER */
+  .loader {
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 0;
+    color: var(--text3);
+    font-size: 0.85rem;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 0;
+    color: var(--text3);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div>
+    <div class="login-title">Unser<br><em>neues Zuhause</em></div>
+    <div class="login-subtitle" style="margin-top:8px">To-do Liste</div>
+  </div>
+  <div class="login-box">
+    <input class="pw-input" type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password">
+    <button class="login-btn" id="login-btn">Einloggen</button>
+    <div class="login-error" id="login-error">Falsches Passwort</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="app-title">Unser <em>Haus</em></div>
+      <div class="topbar-actions">
+        <div class="icon-btn" id="refresh-btn" title="Aktualisieren">↻</div>
+      </div>
+    </div>
+    <div class="filters" id="filters">
+      <button class="chip active" data-filter="alle">Alle</button>
+      <button class="chip" data-filter="innen">Innen</button>
+      <button class="chip" data-filter="außen">Außen</button>
+      <button class="chip" data-filter="hoch">Hoch</button>
+      <button class="chip" data-filter="offen">Offen</button>
+      <button class="chip" data-filter="erledigt">Erledigt</button>
+    </div>
+  </div>
+
+  <div class="main" id="main">
+    <div class="loader" id="loader">Lädt…</div>
+    <div id="task-container"></div>
+  </div>
+
+  <button class="fab" id="fab">+</button>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-title">Neue Aufgabe</div>
+    <div class="field-label">Name</div>
+    <input class="field-input" id="new-name" placeholder="z.B. Gartenzaun">
+    <div class="field-label">Bereich</div>
+    <select class="field-select" id="new-cat">
+      <option value="innen">Innen</option>
+      <option value="außen">Außen</option>
+    </select>
+    <div class="field-label">Priorität</div>
+    <select class="field-select" id="new-prio">
+      <option value="mittel">Mittel</option>
+      <option value="hoch">Hoch</option>
+      <option value="niedrig">Niedrig</option>
+    </select>
+    <div class="field-label">Deadline (optional)</div>
+    <input class="field-input" type="date" id="new-deadline">
+    <div class="field-label">Kommentar (optional)</div>
+    <textarea class="field-textarea" id="new-comment" placeholder="Notizen…"></textarea>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancel-add">Abbrechen</button>
+      <button class="btn-primary" id="save-add">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ─── KONFIGURATION ──────────────────────────────────────────────────────────
+const PASSWORD = 'GrueneMitte22';          // <-- Passwort setzen
+const SUPABASE_URL = 'https://cpnhmtmnxdvpdpzmimbq.supabase.co/rest/v1/';      // <-- z.B. https://xyz.supabase.co
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNwbmhtdG1ueGR2cGRwem1pbWJxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NDE4MjUsImV4cCI6MjA5NDUxNzgyNX0.aP9rKaulEt2C6ubwl9Y76SYQ9L7I7lZ6RXyE6WVTxmk';           // <-- anon/public key
+// ────────────────────────────────────────────────────────────────────────────
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let tasks = [];
+let filter = 'alle';
+let openCards = new Set();
+
+// LOGIN
+document.getElementById('login-btn').addEventListener('click', tryLogin);
+document.getElementById('pw-input').addEventListener('keydown', e => { if(e.key==='Enter') tryLogin(); });
+
+function tryLogin() {
+  const val = document.getElementById('pw-input').value;
+  if(val === PASSWORD) {
+    sessionStorage.setItem('haus_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadTasks();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+if(sessionStorage.getItem('haus_auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  loadTasks();
+}
+
+// SUPABASE
+async function loadTasks() {
+  document.getElementById('loader').style.display = 'flex';
+  const { data, error } = await sb.from('tasks').select('*').order('created_at', { ascending: true });
+  document.getElementById('loader').style.display = 'none';
+  if(error) { showToast('Fehler beim Laden'); return; }
+  tasks = data || [];
+  render();
+}
+
+async function saveField(id, field, value) {
+  const { error } = await sb.from('tasks').update({ [field]: value, updated_at: new Date().toISOString() }).eq('id', id);
+  if(error) showToast('Speichern fehlgeschlagen');
+}
+
+async function addTask(task) {
+  const { data, error } = await sb.from('tasks').insert([task]).select().single();
+  if(error) { showToast('Fehler beim Anlegen'); return; }
+  tasks.push(data);
+  render();
+  showToast('Aufgabe angelegt');
+}
+
+async function deleteTask(id) {
+  await sb.from('tasks').delete().eq('id', id);
+  tasks = tasks.filter(t => t.id !== id);
+  openCards.delete(id);
+  render();
+  showToast('Aufgabe gelöscht');
+}
+
+// REALTIME
+sb.channel('tasks').on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, () => {
+  loadTasks();
+}).subscribe();
+
+// RENDER
+function prioOrder(p) { return p==='hoch'?0:p==='mittel'?1:2; }
+
+function getFiltered() {
+  return tasks.filter(t => {
+    if(filter==='innen') return t.cat==='innen' && !t.done;
+    if(filter==='außen') return t.cat==='außen' && !t.done;
+    if(filter==='hoch') return t.prio==='hoch' && !t.done;
+    if(filter==='offen') return !t.done;
+    if(filter==='erledigt') return t.done;
+    return true;
+  }).sort((a,b) => a.done !== b.done ? (a.done?1:-1) : prioOrder(a.prio)-prioOrder(b.prio));
+}
+
+function render() {
+  const container = document.getElementById('task-container');
+  const shown = getFiltered();
+  if(!shown.length) {
+    container.innerHTML = '<div class="empty-state">Keine Aufgaben</div>';
+    return;
+  }
+
+  const sections = {};
+  shown.forEach(t => {
+    const sec = t.done ? 'erledigt' : t.cat;
+    if(!sections[sec]) sections[sec] = [];
+    sections[sec].push(t);
+  });
+
+  container.innerHTML = '';
+  ['innen','außen','erledigt'].forEach(sec => {
+    if(!sections[sec]) return;
+    const label = document.createElement('div');
+    label.className = 'section-header';
+    label.textContent = sec;
+    container.appendChild(label);
+    sections[sec].forEach(t => container.appendChild(buildCard(t)));
+  });
+}
+
+function buildCard(t) {
+  const el = document.createElement('div');
+  el.className = 'task-card';
+  el.dataset.id = t.id;
+  const isOpen = openCards.has(t.id);
+  const links = Array.isArray(t.links) ? t.links : [];
+
+  let linksHtml = links.map((l,i) => `
+    <div class="link-item">
+      <a href="${l}" target="_blank" rel="noopener">${l}</a>
+      <button class="link-del" data-task="${t.id}" data-li="${i}">✕</button>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="task-row">
+      <div class="check-ring ${t.done?'done-ring':''}" data-check="${t.id}"></div>
+      <div class="task-body">
+        <div class="task-name ${t.done?'done-name':''}">${escHtml(t.name)}</div>
+        <div class="task-chips">
+          <span class="tag prio-${t.prio}">${t.prio}</span>
+          <span class="tag cat-tag">${t.cat}</span>
+          ${t.deadline ? `<span class="tag date-tag">bis ${formatDate(t.deadline)}</span>` : ''}
+        </div>
+      </div>
+      <button class="expand-btn" data-expand="${t.id}">${isOpen?'▲':'▾'}</button>
+    </div>
+    <div class="task-detail ${isOpen?'open':''}">
+      ${t.comment ? `<div style="font-size:0.85rem;color:var(--text2);margin-bottom:12px;line-height:1.5">${escHtml(t.comment)}</div>` : ''}
+      <div class="field-label">Kommentar</div>
+      <textarea class="field-textarea" data-save="${t.id}" data-field="comment" rows="2">${escHtml(t.comment||'')}</textarea>
+      <div class="field-label">Deadline</div>
+      <input class="field-input" type="date" data-save="${t.id}" data-field="deadline" value="${t.deadline||''}">
+      <div class="field-label">Priorität</div>
+      <select class="field-select" data-save="${t.id}" data-field="prio">
+        ${['hoch','mittel','niedrig'].map(p=>`<option value="${p}" ${t.prio===p?'selected':''}>${p}</option>`).join('')}
+      </select>
+      <div class="field-label">Bereich</div>
+      <select class="field-select" data-save="${t.id}" data-field="cat">
+        <option value="innen" ${t.cat==='innen'?'selected':''}>Innen</option>
+        <option value="außen" ${t.cat==='außen'?'selected':''}>Außen</option>
+      </select>
+      <div class="field-label">Links</div>
+      <div class="link-list">${linksHtml}</div>
+      <div class="link-add-row">
+        <input type="url" placeholder="https://…" id="link-in-${t.id}">
+        <button class="link-add-btn" data-addlink="${t.id}">+ Link</button>
+      </div>
+      <button class="del-task-btn" data-del="${t.id}">Aufgabe löschen</button>
+    </div>
+  `;
+  return el;
+}
+
+// EVENTS (delegated)
+document.getElementById('task-container').addEventListener('click', async e => {
+  const check = e.target.closest('[data-check]');
+  const expand = e.target.closest('[data-expand]');
+  const del = e.target.closest('[data-del]');
+  const addLink = e.target.closest('[data-addlink]');
+  const delLink = e.target.closest('[data-li]');
+
+  if(check) {
+    const id = parseInt(check.dataset.check);
+    const t = tasks.find(x=>x.id===id);
+    t.done = !t.done;
+    await saveField(id, 'done', t.done);
+    render();
+  }
+  if(expand) {
+    const id = parseInt(expand.dataset.expand);
+    openCards.has(id) ? openCards.delete(id) : openCards.add(id);
+    render();
+  }
+  if(del) {
+    if(confirm('Aufgabe wirklich löschen?')) deleteTask(parseInt(del.dataset.del));
+  }
+  if(addLink) {
+    const id = parseInt(addLink.dataset.addlink);
+    const inp = document.getElementById('link-in-'+id);
+    if(inp && inp.value.trim()) {
+      const t = tasks.find(x=>x.id===id);
+      const links = Array.isArray(t.links) ? [...t.links] : [];
+      links.push(inp.value.trim());
+      t.links = links;
+      await saveField(id, 'links', links);
+      render();
+    }
+  }
+  if(delLink) {
+    const id = parseInt(delLink.dataset.task);
+    const i = parseInt(delLink.dataset.li);
+    const t = tasks.find(x=>x.id===id);
+    const links = [...t.links];
+    links.splice(i,1);
+    t.links = links;
+    await saveField(id, 'links', links);
+    render();
+  }
+});
+
+document.getElementById('task-container').addEventListener('change', async e => {
+  const save = e.target.closest('[data-save]');
+  if(!save) return;
+  const id = parseInt(save.dataset.save);
+  const field = save.dataset.field;
+  const val = e.target.value;
+  const t = tasks.find(x=>x.id===id);
+  t[field] = val;
+  await saveField(id, field, val);
+  if(field==='prio'||field==='cat') render();
+});
+
+// FILTERS
+document.getElementById('filters').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if(!chip) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  filter = chip.dataset.filter;
+  render();
+});
+
+// REFRESH
+document.getElementById('refresh-btn').addEventListener('click', loadTasks);
+
+// ADD MODAL
+document.getElementById('fab').addEventListener('click', () => {
+  document.getElementById('add-modal').classList.add('open');
+  document.getElementById('new-name').focus();
+});
+document.getElementById('cancel-add').addEventListener('click', () => {
+  document.getElementById('add-modal').classList.remove('open');
+});
+document.getElementById('add-modal').addEventListener('click', e => {
+  if(e.target === document.getElementById('add-modal')) document.getElementById('add-modal').classList.remove('open');
+});
+document.getElementById('save-add').addEventListener('click', async () => {
+  const name = document.getElementById('new-name').value.trim();
+  if(!name) return;
+  const task = {
+    name,
+    cat: document.getElementById('new-cat').value,
+    prio: document.getElementById('new-prio').value,
+    deadline: document.getElementById('new-deadline').value || null,
+    comment: document.getElementById('new-comment').value.trim(),
+    done: false,
+    links: []
+  };
+  document.getElementById('add-modal').classList.remove('open');
+  ['new-name','new-deadline','new-comment'].forEach(id => document.getElementById(id).value='');
+  await addTask(task);
+});
+
+// HELPERS
+function formatDate(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}.${m}.${y}`;
+}
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
