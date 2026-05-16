@@ -172,11 +172,11 @@
       <div class="icon-btn" id="refresh-btn">↻</div>
     </div>
     <div class="filters" id="filters">
-      <button class="chip active" data-filter="alle">Alle</button>
+      <button class="chip" data-filter="alle">Alle</button>
       <button class="chip" data-filter="sehr-hoch">Sehr hoch</button>
       <button class="chip" data-filter="innen">Innen</button>
       <button class="chip" data-filter="außen">Außen</button>
-      <button class="chip" data-filter="offen">Offen</button>
+      <button class="chip active" data-filter="offen">Offen</button>
       <button class="chip" data-filter="erledigt">Erledigt</button>
     </div>
   </div>
@@ -233,7 +233,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // ────────────────────────────────────────────────────────────────────────────
 
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let tasks = [], filter = 'alle', openCards = new Set();
+let tasks = [], filter = 'offen', openCards = new Set();
 
 // LOGIN
 document.getElementById('login-btn').addEventListener('click', tryLogin);
